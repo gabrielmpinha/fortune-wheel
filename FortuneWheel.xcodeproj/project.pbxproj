@@ -8,10 +8,12 @@
 
 /* Begin PBXBuildFile section */
 		3C377869C4AF4374E32CC279 /* BirdTimeDataTests.swift in Sources */ = {isa = PBXBuildFile; fileRef = 0F62204F1E00A719DDFFF473 /* BirdTimeDataTests.swift */; };
+		4A24D2B299C6B61DB27CAB1E /* Paralogue.swift in Sources */ = {isa = PBXBuildFile; fileRef = 5F1ACF1EE15DB6E121FD0111 /* Paralogue.swift */; };
 		708159547FE1882D9BE98CE6 /* BirdTimeData.swift in Sources */ = {isa = PBXBuildFile; fileRef = 0A1AD94435860C6A5663BBCA /* BirdTimeData.swift */; };
 		8047EAC66DB2D8ACB03D245E /* ContentView.swift in Sources */ = {isa = PBXBuildFile; fileRef = 16CA4B107864132B8714EDC2 /* ContentView.swift */; };
 		A921DBB47CE4A959C6792992 /* FortuneWheelApp.swift in Sources */ = {isa = PBXBuildFile; fileRef = 4D94D25207CADDFFC311A3BD /* FortuneWheelApp.swift */; };
 		C9332CEC73EF4B2EE537EBD3 /* Settings.swift in Sources */ = {isa = PBXBuildFile; fileRef = DE8108CB359107A2F5B64B2D /* Settings.swift */; };
+		D36BFE4C86BF130DEA602A76 /* ParalogueData.swift in Sources */ = {isa = PBXBuildFile; fileRef = DD786A8C31F27350E57FF446 /* ParalogueData.swift */; };
 		EF52A327E17A9765FEC66E58 /* BirdTime.swift in Sources */ = {isa = PBXBuildFile; fileRef = 9EF02DA398D6EA4D160774C9 /* BirdTime.swift */; };
 /* End PBXBuildFile section */
 
@@ -30,8 +32,10 @@
 		0F62204F1E00A719DDFFF473 /* BirdTimeDataTests.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = BirdTimeDataTests.swift; sourceTree = "<group>"; };
 		16CA4B107864132B8714EDC2 /* ContentView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = ContentView.swift; sourceTree = "<group>"; };
 		4D94D25207CADDFFC311A3BD /* FortuneWheelApp.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = FortuneWheelApp.swift; sourceTree = "<group>"; };
+		5F1ACF1EE15DB6E121FD0111 /* Paralogue.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = Paralogue.swift; sourceTree = "<group>"; };
 		9EF02DA398D6EA4D160774C9 /* BirdTime.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = BirdTime.swift; sourceTree = "<group>"; };
 		BD804C97E51A93E9C192225E /* FortuneWheelTests.xctest */ = {isa = PBXFileReference; explicitFileType = wrapper.cfbundle; includeInIndex = 0; path = FortuneWheelTests.xctest; sourceTree = BUILT_PRODUCTS_DIR; };
+		DD786A8C31F27350E57FF446 /* ParalogueData.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = ParalogueData.swift; sourceTree = "<group>"; };
 		DE8108CB359107A2F5B64B2D /* Settings.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = Settings.swift; sourceTree = "<group>"; };
 		FD2FB811CE600C529E7D7F1A /* FortuneWheel.app */ = {isa = PBXFileReference; explicitFileType = wrapper.application; includeInIndex = 0; path = FortuneWheel.app; sourceTree = BUILT_PRODUCTS_DIR; };
 /* End PBXFileReference section */
@@ -41,6 +45,7 @@
 			isa = PBXGroup;
 			children = (
 				0A1AD94435860C6A5663BBCA /* BirdTimeData.swift */,
+				DD786A8C31F27350E57FF446 /* ParalogueData.swift */,
 			);
 			path = Data;
 			sourceTree = "<group>";
@@ -49,6 +54,7 @@
 			isa = PBXGroup;
 			children = (
 				9EF02DA398D6EA4D160774C9 /* BirdTime.swift */,
+				5F1ACF1EE15DB6E121FD0111 /* Paralogue.swift */,
 				DE8108CB359107A2F5B64B2D /* Settings.swift */,
 			);
 			path = Models;
@@ -185,6 +191,8 @@
 				708159547FE1882D9BE98CE6 /* BirdTimeData.swift in Sources */,
 				8047EAC66DB2D8ACB03D245E /* ContentView.swift in Sources */,
 				A921DBB47CE4A959C6792992 /* FortuneWheelApp.swift in Sources */,
+				4A24D2B299C6B61DB27CAB1E /* Paralogue.swift in Sources */,
+				D36BFE4C86BF130DEA602A76 /* ParalogueData.swift in Sources */,
 				C9332CEC73EF4B2EE537EBD3 /* Settings.swift in Sources */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;

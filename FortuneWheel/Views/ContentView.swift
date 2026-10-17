@@ -1,12 +1,39 @@
 import AppKit
 import SwiftUI
 
+private enum ReferenceSection: String, CaseIterable, Identifiable {
+    case birdTime
+    case paralogues
+
+    var id: Self { self }
+
+    var title: String {
+        switch self {
+        case .birdTime: "Bird Time"
+        case .paralogues: "Paralogues"
+        }
+    }
+
+    var systemImage: String {
+        switch self {
+        case .birdTime: "bird.fill"
+        case .paralogues: "calendar"
+        }
+    }
+}
+
 struct ContentView: View {
     @Environment(AppState.self) private var appState
     @SceneStorage("selectedCharacterID") private var selectedCharacterID: String?
+    @SceneStorage("selectedParalogueRouteID") private var selectedParalogueRouteID: String?
+    @SceneStorage("selectedReferenceSection") private var selectedReferenceSectionRaw = ReferenceSection.birdTime.rawValue
     @AppStorage("showSourceNotes") private var showSourceNotes = true
     @State private var searchText = ""
     @State private var selectedResponseID: UUID?
+
+    private var selectedReferenceSection: ReferenceSection {
+        ReferenceSection(rawValue: selectedReferenceSectionRaw) ?? .birdTime
+    }
 
     private var filteredCharacters: [BirdTimeCharacter] {
         let trimmed = searchText.trimmingCharacters(in: .whitespacesAndNewlines)
@@ -23,39 +50,56 @@ struct ContentView: View {
         @Bindable var appState = appState
 
         NavigationSplitView {
-            SidebarView(
-                characters: filteredCharacters,
-                selectedCharacterID: $selectedCharacterID,
-                searchText: $searchText
-            )
+            Group {
+                switch selectedReferenceSection {
+                case .birdTime:
+                    SidebarView(
+                        characters: filteredCharacters,
+                        selectedCharacterID: $selectedCharacterID,
+                        searchText: $searchText
+                    )
+                case .paralogues:
+                    ParalogueSidebarView(selectedRouteID: $selectedParalogueRouteID)
+                }
+            }
             .navigationSplitViewColumnWidth(min: 220, ideal: 250, max: 320)
         } detail: {
-            if let selectedCharacter {
-                CharacterDetailView(character: selectedCharacter, selectedResponseID: $selectedResponseID)
-            } else {
-                ContentUnavailableView("No Character Selected", systemImage: "bird", description: Text("Choose a character to see their Bird Time responses."))
+            switch selectedReferenceSection {
+            case .birdTime:
+                if let selectedCharacter {
+                    CharacterDetailView(character: selectedCharacter, selectedResponseID: $selectedResponseID)
+                } else {
+                    ContentUnavailableView("No Character Selected", systemImage: "bird", description: Text("Choose a character to see their Bird Time responses."))
+                }
+            case .paralogues:
+                ParalogueReferenceView(selectedRouteID: $selectedParalogueRouteID)
             }
         }
         .navigationSplitViewStyle(.balanced)
         .toolbar {
             ToolbarItem(placement: .principal) {
-                HStack(spacing: 8) {
-                    Image(systemName: "bird.fill")
-                        .foregroundStyle(.teal)
-                    Text("Fortune Wheel")
-                        .font(.headline)
+                Picker("Reference", selection: $selectedReferenceSectionRaw) {
+                    ForEach(ReferenceSection.allCases) { section in
+                        Label(section.title, systemImage: section.systemImage)
+                            .labelStyle(.titleOnly)
+                            .tag(section.rawValue)
+                    }
                 }
-                .accessibilityAddTraits(.isHeader)
+                .pickerStyle(.segmented)
+                .frame(width: 250)
+                .accessibilityLabel("Reference section")
             }
-            ToolbarItem(placement: .primaryAction) {
-                Button {
-                    appState.isCommandPalettePresented = true
-                } label: {
-                    Label("Find Character", systemImage: "command")
+            if selectedReferenceSection == .birdTime {
+                ToolbarItem(placement: .primaryAction) {
+                    Button {
+                        appState.isCommandPalettePresented = true
+                    } label: {
+                        Label("Find Character", systemImage: "command")
+                    }
+                    .labelStyle(.iconOnly)
+                    .help("Find Character (⌘K)")
+                    .accessibilityLabel("Find character")
                 }
-                .labelStyle(.iconOnly)
-                .help("Find Character (⌘K)")
-                .accessibilityLabel("Find character")
             }
         }
         .sheet(isPresented: $appState.isCommandPalettePresented) {
@@ -65,9 +109,12 @@ struct ContentView: View {
             if selectedCharacterID == nil {
                 selectedCharacterID = BirdTimeData.characters.first?.id
             }
+            if selectedParalogueRouteID == nil {
+                selectedParalogueRouteID = ParalogueData.routes.first?.id
+            }
         }
         .overlay(alignment: .bottom) {
-            if showSourceNotes {
+            if showSourceNotes && selectedReferenceSection == .birdTime {
                 SourceNoteView()
                     .padding(.bottom, 10)
                     .padding(.horizontal, 16)
@@ -179,6 +226,290 @@ private struct SidebarView: View {
                 }
             }
         }
+    }
+}
+
+private struct ParalogueSidebarView: View {
+    @Binding var selectedRouteID: String?
+
+    var body: some View {
+        VStack(alignment: .leading, spacing: 0) {
+            HStack(alignment: .firstTextBaseline) {
+                Text("ROUTES")
+                    .font(.system(size: 11, weight: .semibold))
+                    .tracking(1.2)
+                    .foregroundStyle(.secondary)
+                Spacer()
+                Text("\(ParalogueData.routes.count)")
+                    .font(.caption.monospacedDigit())
+                    .foregroundStyle(.tertiary)
+            }
+            .padding(.horizontal, 12)
+            .padding(.top, 12)
+            .padding(.bottom, 5)
+
+            Text("Select a route to see its paralogues")
+                .font(.caption)
+                .foregroundStyle(.secondary)
+                .padding(.horizontal, 12)
+                .padding(.bottom, 8)
+
+            List(selection: $selectedRouteID) {
+                Section("Routes") {
+                    ForEach(ParalogueData.routes) { route in
+                        NavigationLink(value: route.id) {
+                            ParalogueRouteRow(route: route)
+                        }
+                        .tag(route.id)
+                    }
+                }
+                Section {
+                    NavigationLink(value: ParalogueData.availabilityTableID) {
+                        Label("Availability table", systemImage: "tablecells")
+                    }
+                    .tag(ParalogueData.availabilityTableID)
+                }
+            }
+            .listStyle(.sidebar)
+        }
+        .safeAreaInset(edge: .bottom) {
+            HStack(spacing: 7) {
+                Image(systemName: "calendar")
+                    .font(.caption)
+                    .foregroundStyle(.secondary)
+                Text("Month / day dates")
+                    .font(.caption)
+                    .foregroundStyle(.secondary)
+                Spacer()
+            }
+            .padding(.horizontal, 12)
+            .padding(.vertical, 10)
+            .background(.bar)
+        }
+    }
+}
+
+private struct ParalogueRouteRow: View {
+    let route: ParalogueRoute
+
+    var body: some View {
+        HStack(spacing: 9) {
+            Image(systemName: "map")
+                .font(.system(size: 15, weight: .semibold))
+                .foregroundStyle(.orange)
+                .frame(width: 26, height: 26)
+                .background(.orange.opacity(0.12), in: .rect(cornerRadius: 7))
+
+            VStack(alignment: .leading, spacing: 1) {
+                Text(route.name)
+                    .font(.system(size: 13, weight: .medium))
+                Text("\(route.paralogues.count) paralogues")
+                    .font(.system(size: 10))
+                    .foregroundStyle(.secondary)
+            }
+            Spacer(minLength: 0)
+        }
+        .accessibilityElement(children: .combine)
+        .accessibilityLabel("\(route.name) route, \(route.paralogues.count) paralogues available")
+    }
+}
+
+private struct ParalogueReferenceView: View {
+    @Binding var selectedRouteID: String?
+
+    private var selectedRoute: ParalogueRoute {
+        ParalogueData.routes.first { $0.id == selectedRouteID } ?? ParalogueData.routes[0]
+    }
+
+    var body: some View {
+        ScrollView {
+            if selectedRouteID == ParalogueData.availabilityTableID {
+                VStack(alignment: .leading, spacing: 24) {
+                    ParalogueHeader()
+
+                    VStack(alignment: .leading, spacing: 10) {
+                        Text("Availability table")
+                            .font(.title2.weight(.semibold))
+                        Text("Compare every route and paralogue at a glance.")
+                            .font(.callout)
+                            .foregroundStyle(.secondary)
+                        ParalogueMatrixView()
+                    }
+                }
+                .frame(maxWidth: 1_000, alignment: .leading)
+                .padding(.horizontal, 28)
+                .padding(.vertical, 28)
+                .frame(maxWidth: .infinity, alignment: .top)
+            } else {
+                VStack(alignment: .leading, spacing: 24) {
+                    ParalogueHeader()
+
+                    VStack(alignment: .leading, spacing: 12) {
+                        Text("\(selectedRoute.name) route")
+                            .font(.title2.weight(.semibold))
+                        Text("\(selectedRoute.paralogues.count) paralogues available on this route")
+                            .font(.callout)
+                            .foregroundStyle(.secondary)
+
+                        LazyVGrid(columns: [
+                            GridItem(.flexible(minimum: 150), spacing: 10),
+                            GridItem(.flexible(minimum: 150), spacing: 10)
+                        ], spacing: 10) {
+                            ForEach(selectedRoute.paralogues) { routeParalogue in
+                                ParalogueScheduleCard(
+                                    characterName: routeParalogue.ownerName,
+                                    window: routeParalogue.window
+                                )
+                            }
+                        }
+                    }
+                }
+                .frame(maxWidth: 1_000, alignment: .leading)
+                .padding(.horizontal, 28)
+                .padding(.vertical, 28)
+                .frame(maxWidth: .infinity, alignment: .top)
+            }
+        }
+        .background(Color(nsColor: .windowBackgroundColor))
+        .navigationTitle("Paralogues")
+        .navigationSubtitle("Availability reference")
+    }
+}
+
+private struct ParalogueHeader: View {
+    var body: some View {
+        HStack(spacing: 14) {
+            Image(systemName: "calendar.badge.clock")
+                .font(.system(size: 24, weight: .semibold))
+                .foregroundStyle(.orange)
+                .frame(width: 52, height: 52)
+                .background(.orange.opacity(0.13), in: .rect(cornerRadius: 14))
+
+            VStack(alignment: .leading, spacing: 4) {
+                Text("Paralogue availability")
+                    .font(.system(size: 28, weight: .bold, design: .rounded))
+                Text("Route access and dates • month/day notation • year not specified by source")
+                    .font(.callout)
+                    .foregroundStyle(.secondary)
+            }
+            Spacer()
+        }
+        .accessibilityElement(children: .combine)
+    }
+}
+
+private struct ParalogueScheduleCard: View {
+    let characterName: String
+    let window: ParalogueWindow?
+
+    var body: some View {
+        HStack(spacing: 10) {
+            Image(systemName: window == nil ? "minus.circle" : "calendar")
+                .font(.system(size: 15, weight: .semibold))
+                .foregroundStyle(window == nil ? Color.secondary : Color.orange)
+                .frame(width: 30, height: 30)
+                .background((window == nil ? Color.secondary : Color.orange).opacity(0.12), in: .circle)
+
+            VStack(alignment: .leading, spacing: 3) {
+                Text(characterName)
+                    .font(.system(size: 13, weight: .semibold))
+                if let window {
+                    Text(window.displayText)
+                        .font(.system(size: 13, weight: .medium, design: .rounded).monospacedDigit())
+                        .foregroundStyle(.orange)
+                        .lineLimit(2)
+                } else {
+                    Text("Not available")
+                        .font(.caption)
+                        .foregroundStyle(.secondary)
+                }
+            }
+            Spacer(minLength: 0)
+        }
+        .padding(12)
+        .frame(maxWidth: .infinity, minHeight: 66, alignment: .leading)
+        .background(window == nil ? Color.primary.opacity(0.035) : Color.orange.opacity(0.07), in: .rect(cornerRadius: 12))
+        .overlay {
+            RoundedRectangle(cornerRadius: 12)
+                .stroke((window == nil ? Color.primary : Color.orange).opacity(0.12), lineWidth: 1)
+        }
+        .accessibilityElement(children: .combine)
+        .accessibilityLabel(window.map { "\(characterName), \($0.accessibilityText)" } ?? "\(characterName), not available")
+    }
+}
+
+private struct ParalogueMatrixView: View {
+    private let ownerColumnWidth: CGFloat = 160
+    private let participantColumnWidth: CGFloat = 150
+
+    var body: some View {
+        ScrollView([.horizontal, .vertical]) {
+            VStack(spacing: 0) {
+                HStack(spacing: 0) {
+                    ParalogueTableCell(text: "Paralogue owner", width: ownerColumnWidth, height: 52, isHeader: true, alignment: .leading, textAlignment: .leading)
+                    ForEach(ParalogueData.participants, id: \.self) { participant in
+                        ParalogueTableCell(text: participant, width: participantColumnWidth, height: 52, isHeader: true)
+                    }
+                }
+
+                ForEach(Array(ParalogueData.owners.enumerated()), id: \.element.id) { index, owner in
+                    HStack(spacing: 0) {
+                        ParalogueTableCell(
+                            text: owner.name,
+                            width: ownerColumnWidth,
+                            height: 58,
+                            isHeader: false,
+                            alignment: .leading,
+                            rowTint: index.isMultiple(of: 2) ? Color.primary.opacity(0.025) : .clear
+                        )
+                        ForEach(ParalogueData.participants, id: \.self) { participant in
+                            ParalogueTableCell(
+                                text: owner.window(for: participant)?.displayText ?? "N/A",
+                                width: participantColumnWidth,
+                                height: 58,
+                                isHeader: false,
+                                isUnavailable: owner.window(for: participant) == nil,
+                                rowTint: index.isMultiple(of: 2) ? Color.primary.opacity(0.025) : .clear
+                            )
+                        }
+                    }
+                }
+            }
+            .padding(1)
+        }
+        .frame(minHeight: 260, maxHeight: 410)
+        .background(.regularMaterial, in: .rect(cornerRadius: 12))
+        .overlay {
+            RoundedRectangle(cornerRadius: 12)
+                .stroke(Color.primary.opacity(0.12), lineWidth: 1)
+        }
+        .accessibilityElement(children: .contain)
+        .accessibilityLabel("Paralogue availability matrix")
+    }
+}
+
+private struct ParalogueTableCell: View {
+    let text: String
+    let width: CGFloat
+    let height: CGFloat
+    let isHeader: Bool
+    var alignment: Alignment = .center
+    var textAlignment: TextAlignment = .center
+    var isUnavailable = false
+    var rowTint: Color = .clear
+
+    var body: some View {
+        Text(text)
+            .font(.system(size: isHeader ? 13 : 12, weight: isHeader || isUnavailable ? .semibold : .medium, design: .rounded).monospacedDigit())
+            .foregroundStyle(isUnavailable ? Color.secondary : Color.primary)
+            .multilineTextAlignment(textAlignment)
+            .lineLimit(2)
+            .frame(width: width, height: height, alignment: alignment)
+            .background(isHeader ? Color.primary.opacity(0.07) : rowTint)
+            .overlay {
+                Rectangle()
+                    .stroke(Color.primary.opacity(0.1), lineWidth: 0.5)
+            }
     }
 }
 
@@ -498,7 +829,7 @@ private struct SourceNoteView: View {
     var body: some View {
         HStack(spacing: 7) {
             Image(systemName: "info.circle")
-            Text("Fan reference • dialogue and reactions are kept in English to match the game")
+            Text("Fan reference • dates use month/day notation; dialogue and reactions match the game language")
         }
         .font(.caption)
         .foregroundStyle(.secondary)

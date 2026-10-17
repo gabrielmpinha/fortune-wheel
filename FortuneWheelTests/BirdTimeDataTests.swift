@@ -46,4 +46,31 @@ final class BirdTimeDataTests: XCTestCase {
         let actualCounts = Dictionary(uniqueKeysWithValues: BirdTimeData.characters.map { ($0.name, $0.responses.count) })
         XCTAssertEqual(actualCounts, expectedCounts)
     }
+
+    func testParalogueAvailabilityMatchesReviewedSourceSet() {
+        XCTAssertEqual(ParalogueData.participants, ["Cai", "Dietrich", "Theodora", "Leda"])
+        XCTAssertEqual(ParalogueData.owners.map(\.name), [
+            "Leda", "Theodora", "Bertrand", "Talimun", "Solel", "Anatolia", "Cai", "Dietrich", "Orchel"
+        ])
+
+        for owner in ParalogueData.owners {
+            XCTAssertTrue(
+                Set(owner.availability.keys).isSubset(of: Set(ParalogueData.participants)),
+                "Unknown participant in \(owner.name)'s paralogue"
+            )
+        }
+
+        let leda = try! XCTUnwrap(ParalogueData.owners.first { $0.name == "Leda" })
+        XCTAssertEqual(leda.window(for: "Dietrich"), ParalogueWindow(start: "9/2", end: "9/8"))
+
+        let bertrand = try! XCTUnwrap(ParalogueData.owners.first { $0.name == "Bertrand" })
+        XCTAssertEqual(bertrand.window(for: "Dietrich"), ParalogueWindow(start: "9/17", note: "One day only"))
+
+        XCTAssertEqual(ParalogueData.routes.map(\.name), ParalogueData.participants)
+        XCTAssertEqual(ParalogueData.routes.map(\.paralogues.count), [4, 8, 7, 4])
+        XCTAssertEqual(
+            ParalogueData.routes.first { $0.name == "Cai" }?.paralogues.map(\.ownerName),
+            ["Bertrand", "Talimun", "Solel", "Orchel"]
+        )
+    }
 }
