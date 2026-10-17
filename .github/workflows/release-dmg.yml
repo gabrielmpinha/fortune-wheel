@@ -1,0 +1,55 @@
+name: Release DMG
+
+on:
+  push:
+    tags:
+      - 'v*'
+
+permissions:
+  contents: write
+
+jobs:
+  release:
+    runs-on: macos-latest
+
+    steps:
+      - name: Check out source
+        uses: actions/checkout@v4
+        with:
+          fetch-depth: 0
+
+      - name: Build unsigned app
+        run: |
+          set -euo pipefail
+          xcodebuild \
+            -project FortuneWheel.xcodeproj \
+            -scheme FortuneWheel \
+            -configuration Release \
+            -destination 'platform=macOS' \
+            -derivedDataPath "$RUNNER_TEMP/FortuneWheelReleaseDerivedData" \
+            build \
+            CODE_SIGNING_ALLOWED=NO \
+            CODE_SIGNING_REQUIRED=NO \
+            CODE_SIGN_IDENTITY=""
+
+      - name: Create DMG
+        run: |
+          set -euo pipefail
+          dmg_path="$RUNNER_TEMP/FortuneWheel-${GITHUB_REF_NAME}.dmg"
+          bash scripts/create-dmg.sh \
+            "$RUNNER_TEMP/FortuneWheelReleaseDerivedData/Build/Products/Release/FortuneWheel.app" \
+            "$dmg_path"
+          echo "DMG_PATH=$dmg_path" >> "$GITHUB_ENV"
+
+      - name: Publish GitHub Release
+        env:
+          GH_TOKEN: ${{ secrets.GITHUB_TOKEN }}
+        run: |
+          set -euo pipefail
+          if gh release view "$GITHUB_REF_NAME" >/dev/null 2>&1; then
+            gh release upload "$GITHUB_REF_NAME" "$DMG_PATH" --clobber
+          else
+            gh release create "$GITHUB_REF_NAME" "$DMG_PATH" \
+              --title "Fortune Wheel ${GITHUB_REF_NAME#v}" \
+              --generate-notes
+          fi

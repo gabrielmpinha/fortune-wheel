@@ -1,0 +1,49 @@
+name: FortuneWheel
+options:
+  bundleIdPrefix: com.gabrielpinheiro
+  deploymentTarget:
+    macOS: "14.0"
+  createIntermediateGroups: true
+  developmentLanguage: en
+settings:
+  base:
+    SWIFT_VERSION: 6.0
+    MACOSX_DEPLOYMENT_TARGET: 14.0
+    PRODUCT_BUNDLE_IDENTIFIER: com.gabrielpinheiro.fortunewheel
+    PRODUCT_NAME: FortuneWheel
+    INFOPLIST_KEY_CFBundleDisplayName: Fortune Wheel
+    INFOPLIST_KEY_LSApplicationCategoryType: public.app-category.games
+    SWIFT_EMIT_LOC_STRINGS: YES
+targets:
+  FortuneWheel:
+    type: application
+    platform: macOS
+    sources:
+      - path: FortuneWheel
+    settings:
+      base:
+        GENERATE_INFOPLIST_FILE: YES
+        CODE_SIGN_IDENTITY: "-"
+        CODE_SIGNING_REQUIRED: NO
+        CODE_SIGNING_ALLOWED: NO
+        ENABLE_HARDENED_RUNTIME: NO
+    scheme:
+      testTargets:
+        - FortuneWheelTests
+  FortuneWheelTests:
+    type: bundle.unit-test
+    platform: macOS
+    sources:
+      - path: FortuneWheelTests
+    dependencies:
+      - target: FortuneWheel
+    settings:
+      base:
+        GENERATE_INFOPLIST_FILE: YES
+        PRODUCT_NAME: FortuneWheelTests
+        PRODUCT_MODULE_NAME: FortuneWheelTests
+        TEST_HOST: $(BUILT_PRODUCTS_DIR)/FortuneWheel.app/Contents/MacOS/FortuneWheel
+        BUNDLE_LOADER: $(TEST_HOST)
+        CODE_SIGN_IDENTITY: "-"
+        CODE_SIGNING_REQUIRED: NO
+        CODE_SIGNING_ALLOWED: NO
