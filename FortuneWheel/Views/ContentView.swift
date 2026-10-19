@@ -4,6 +4,7 @@ import SwiftUI
 private enum ReferenceSection: String, CaseIterable, Identifiable {
     case birdTime
     case paralogues
+    case mapEvents
 
     var id: Self { self }
 
@@ -11,6 +12,7 @@ private enum ReferenceSection: String, CaseIterable, Identifiable {
         switch self {
         case .birdTime: "Bird Time"
         case .paralogues: "Paralogues"
+        case .mapEvents: "Map Events"
         }
     }
 
@@ -18,6 +20,7 @@ private enum ReferenceSection: String, CaseIterable, Identifiable {
         switch self {
         case .birdTime: "bird.fill"
         case .paralogues: "calendar"
+        case .mapEvents: "mappin.and.ellipse"
         }
     }
 }
@@ -26,9 +29,12 @@ struct ContentView: View {
     @Environment(AppState.self) private var appState
     @SceneStorage("selectedCharacterID") private var selectedCharacterID: String?
     @SceneStorage("selectedParalogueRouteID") private var selectedParalogueRouteID: String?
+    @SceneStorage("selectedMapEventRouteID") private var selectedMapEventRouteID: String?
     @SceneStorage("selectedReferenceSection") private var selectedReferenceSectionRaw = ReferenceSection.birdTime.rawValue
     @AppStorage("showSourceNotes") private var showSourceNotes = true
+    @AppStorage("seenOptionalMapEventIDs") private var seenOptionalMapEventIDsRaw = ""
     @State private var searchText = ""
+    @State private var mapEventsSearchText = ""
     @State private var selectedResponseID: UUID?
 
     private var selectedReferenceSection: ReferenceSection {
@@ -46,6 +52,10 @@ struct ContentView: View {
             ?? BirdTimeData.characters.first
     }
 
+    private var seenOptionalMapEventIDs: Set<String> {
+        Set(seenOptionalMapEventIDsRaw.split(separator: "|").map(String.init))
+    }
+
     var body: some View {
         @Bindable var appState = appState
 
@@ -60,6 +70,12 @@ struct ContentView: View {
                     )
                 case .paralogues:
                     ParalogueSidebarView(selectedRouteID: $selectedParalogueRouteID)
+                case .mapEvents:
+                    MapEventsSidebarView(
+                        selectedRouteID: $selectedMapEventRouteID,
+                        searchText: $mapEventsSearchText,
+                        seenEventIDs: seenOptionalMapEventIDs
+                    )
                 }
             }
             .navigationSplitViewColumnWidth(min: 220, ideal: 250, max: 320)
@@ -73,6 +89,13 @@ struct ContentView: View {
                 }
             case .paralogues:
                 ParalogueReferenceView(selectedRouteID: $selectedParalogueRouteID)
+            case .mapEvents:
+                MapEventsReferenceView(
+                    routeID: selectedMapEventRouteID,
+                    searchText: mapEventsSearchText,
+                    seenEventIDs: seenOptionalMapEventIDs,
+                    onToggleSeen: toggleMapEventSeen
+                )
             }
         }
         .navigationSplitViewStyle(.balanced)
@@ -86,7 +109,7 @@ struct ContentView: View {
                     }
                 }
                 .pickerStyle(.segmented)
-                .frame(width: 250)
+                .frame(width: 350)
                 .accessibilityLabel("Reference section")
             }
             if selectedReferenceSection == .birdTime {
@@ -112,6 +135,9 @@ struct ContentView: View {
             if selectedParalogueRouteID == nil {
                 selectedParalogueRouteID = ParalogueData.routes.first?.id
             }
+            if selectedMapEventRouteID == nil {
+                selectedMapEventRouteID = MapEventData.routes.first?.id
+            }
         }
         .overlay(alignment: .bottom) {
             if showSourceNotes && selectedReferenceSection == .birdTime {
@@ -121,6 +147,16 @@ struct ContentView: View {
                     .allowsHitTesting(false)
             }
         }
+    }
+
+    private func toggleMapEventSeen(_ eventID: String) {
+        var seenIDs = seenOptionalMapEventIDs
+        if seenIDs.contains(eventID) {
+            seenIDs.remove(eventID)
+        } else {
+            seenIDs.insert(eventID)
+        }
+        seenOptionalMapEventIDsRaw = seenIDs.sorted().joined(separator: "|")
     }
 
 }

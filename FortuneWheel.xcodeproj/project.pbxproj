@@ -11,10 +11,14 @@
 		4A24D2B299C6B61DB27CAB1E /* Paralogue.swift in Sources */ = {isa = PBXBuildFile; fileRef = 5F1ACF1EE15DB6E121FD0111 /* Paralogue.swift */; };
 		708159547FE1882D9BE98CE6 /* BirdTimeData.swift in Sources */ = {isa = PBXBuildFile; fileRef = 0A1AD94435860C6A5663BBCA /* BirdTimeData.swift */; };
 		8047EAC66DB2D8ACB03D245E /* ContentView.swift in Sources */ = {isa = PBXBuildFile; fileRef = 16CA4B107864132B8714EDC2 /* ContentView.swift */; };
+		8DAF7826FC80AD2E34791A3B /* MapEventDataTests.swift in Sources */ = {isa = PBXBuildFile; fileRef = CD89557FCF4090B9DD3320FB /* MapEventDataTests.swift */; };
 		A921DBB47CE4A959C6792992 /* FortuneWheelApp.swift in Sources */ = {isa = PBXBuildFile; fileRef = 4D94D25207CADDFFC311A3BD /* FortuneWheelApp.swift */; };
 		C9332CEC73EF4B2EE537EBD3 /* Settings.swift in Sources */ = {isa = PBXBuildFile; fileRef = DE8108CB359107A2F5B64B2D /* Settings.swift */; };
 		D36BFE4C86BF130DEA602A76 /* ParalogueData.swift in Sources */ = {isa = PBXBuildFile; fileRef = DD786A8C31F27350E57FF446 /* ParalogueData.swift */; };
+		D435758FF411122081FB7C3B /* MapEventData.swift in Sources */ = {isa = PBXBuildFile; fileRef = 98D05FE46BA0EC9234EA8979 /* MapEventData.swift */; };
 		EF52A327E17A9765FEC66E58 /* BirdTime.swift in Sources */ = {isa = PBXBuildFile; fileRef = 9EF02DA398D6EA4D160774C9 /* BirdTime.swift */; };
+		F77D5737EF735C1A732286E0 /* MapEventsViews.swift in Sources */ = {isa = PBXBuildFile; fileRef = CB7667CF36C30535D6C53DBC /* MapEventsViews.swift */; };
+		FCBCF7F55A3AD05ACBE65A1A /* MapEvent.swift in Sources */ = {isa = PBXBuildFile; fileRef = FB0966816CA74037D53A94C9 /* MapEvent.swift */; };
 /* End PBXBuildFile section */
 
 /* Begin PBXContainerItemProxy section */
@@ -33,10 +37,14 @@
 		16CA4B107864132B8714EDC2 /* ContentView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = ContentView.swift; sourceTree = "<group>"; };
 		4D94D25207CADDFFC311A3BD /* FortuneWheelApp.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = FortuneWheelApp.swift; sourceTree = "<group>"; };
 		5F1ACF1EE15DB6E121FD0111 /* Paralogue.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = Paralogue.swift; sourceTree = "<group>"; };
+		98D05FE46BA0EC9234EA8979 /* MapEventData.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = MapEventData.swift; sourceTree = "<group>"; };
 		9EF02DA398D6EA4D160774C9 /* BirdTime.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = BirdTime.swift; sourceTree = "<group>"; };
 		BD804C97E51A93E9C192225E /* FortuneWheelTests.xctest */ = {isa = PBXFileReference; explicitFileType = wrapper.cfbundle; includeInIndex = 0; path = FortuneWheelTests.xctest; sourceTree = BUILT_PRODUCTS_DIR; };
+		CB7667CF36C30535D6C53DBC /* MapEventsViews.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = MapEventsViews.swift; sourceTree = "<group>"; };
+		CD89557FCF4090B9DD3320FB /* MapEventDataTests.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = MapEventDataTests.swift; sourceTree = "<group>"; };
 		DD786A8C31F27350E57FF446 /* ParalogueData.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = ParalogueData.swift; sourceTree = "<group>"; };
 		DE8108CB359107A2F5B64B2D /* Settings.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = Settings.swift; sourceTree = "<group>"; };
+		FB0966816CA74037D53A94C9 /* MapEvent.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = MapEvent.swift; sourceTree = "<group>"; };
 		FD2FB811CE600C529E7D7F1A /* FortuneWheel.app */ = {isa = PBXFileReference; explicitFileType = wrapper.application; includeInIndex = 0; path = FortuneWheel.app; sourceTree = BUILT_PRODUCTS_DIR; };
 /* End PBXFileReference section */
 
@@ -45,6 +53,7 @@
 			isa = PBXGroup;
 			children = (
 				0A1AD94435860C6A5663BBCA /* BirdTimeData.swift */,
+				98D05FE46BA0EC9234EA8979 /* MapEventData.swift */,
 				DD786A8C31F27350E57FF446 /* ParalogueData.swift */,
 			);
 			path = Data;
@@ -54,6 +63,7 @@
 			isa = PBXGroup;
 			children = (
 				9EF02DA398D6EA4D160774C9 /* BirdTime.swift */,
+				FB0966816CA74037D53A94C9 /* MapEvent.swift */,
 				5F1ACF1EE15DB6E121FD0111 /* Paralogue.swift */,
 				DE8108CB359107A2F5B64B2D /* Settings.swift */,
 			);
@@ -73,6 +83,7 @@
 			isa = PBXGroup;
 			children = (
 				0F62204F1E00A719DDFFF473 /* BirdTimeDataTests.swift */,
+				CD89557FCF4090B9DD3320FB /* MapEventDataTests.swift */,
 			);
 			path = FortuneWheelTests;
 			sourceTree = "<group>";
@@ -101,6 +112,7 @@
 			isa = PBXGroup;
 			children = (
 				16CA4B107864132B8714EDC2 /* ContentView.swift */,
+				CB7667CF36C30535D6C53DBC /* MapEventsViews.swift */,
 			);
 			path = Views;
 			sourceTree = "<group>";
@@ -180,6 +192,7 @@
 			buildActionMask = 2147483647;
 			files = (
 				3C377869C4AF4374E32CC279 /* BirdTimeDataTests.swift in Sources */,
+				8DAF7826FC80AD2E34791A3B /* MapEventDataTests.swift in Sources */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};
@@ -191,6 +204,9 @@
 				708159547FE1882D9BE98CE6 /* BirdTimeData.swift in Sources */,
 				8047EAC66DB2D8ACB03D245E /* ContentView.swift in Sources */,
 				A921DBB47CE4A959C6792992 /* FortuneWheelApp.swift in Sources */,
+				FCBCF7F55A3AD05ACBE65A1A /* MapEvent.swift in Sources */,
+				D435758FF411122081FB7C3B /* MapEventData.swift in Sources */,
+				F77D5737EF735C1A732286E0 /* MapEventsViews.swift in Sources */,
 				4A24D2B299C6B61DB27CAB1E /* Paralogue.swift in Sources */,
 				D36BFE4C86BF130DEA602A76 /* ParalogueData.swift in Sources */,
 				C9332CEC73EF4B2EE537EBD3 /* Settings.swift in Sources */,
@@ -304,12 +320,14 @@
 				CODE_SIGNING_REQUIRED = NO;
 				CODE_SIGN_IDENTITY = "-";
 				COMBINE_HIDPI_IMAGES = YES;
+				CURRENT_PROJECT_VERSION = 3;
 				ENABLE_HARDENED_RUNTIME = NO;
 				GENERATE_INFOPLIST_FILE = YES;
 				LD_RUNPATH_SEARCH_PATHS = (
 					"$(inherited)",
 					"@executable_path/../Frameworks",
 				);
+				MARKETING_VERSION = 0.1.2;
 				SDKROOT = macosx;
 			};
 			name = Debug;
@@ -322,12 +340,14 @@
 				CODE_SIGNING_REQUIRED = NO;
 				CODE_SIGN_IDENTITY = "-";
 				COMBINE_HIDPI_IMAGES = YES;
+				CURRENT_PROJECT_VERSION = 3;
 				ENABLE_HARDENED_RUNTIME = NO;
 				GENERATE_INFOPLIST_FILE = YES;
 				LD_RUNPATH_SEARCH_PATHS = (
 					"$(inherited)",
 					"@executable_path/../Frameworks",
 				);
+				MARKETING_VERSION = 0.1.2;
 				SDKROOT = macosx;
 			};
 			name = Release;

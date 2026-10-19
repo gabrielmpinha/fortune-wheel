@@ -23,6 +23,8 @@ targets:
     settings:
       base:
         GENERATE_INFOPLIST_FILE: YES
+        MARKETING_VERSION: 0.1.2
+        CURRENT_PROJECT_VERSION: 3
         CODE_SIGN_IDENTITY: "-"
         CODE_SIGNING_REQUIRED: NO
         CODE_SIGNING_ALLOWED: NO
